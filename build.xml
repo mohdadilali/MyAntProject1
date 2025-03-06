@@ -1,37 +1,46 @@
-<project name="MyAntProject" basedir="." default="package">
+<project name="MyAntProject" default="package" basedir=".">
     
-    <!-- Set global properties -->
+    <!-- Define properties -->
     <property name="src.dir" value="src"/>
     <property name="build.dir" value="build"/>
     <property name="dist.dir" value="dist"/>
-    <property name="jar.name" value="MyProject.jar"/>
-    
-    <!-- Clean previous builds -->
+    <property name="deploy.dir" value="C:/Deployments"/>
+
+    <!-- Clean the previous build -->
     <target name="clean">
         <delete dir="${build.dir}"/>
         <delete dir="${dist.dir}"/>
     </target>
 
-    <!-- Compile Java sources -->
-    <target name="compile">
+    <!-- Compile Java source files -->
+    <target name="compile" depends="clean">
         <mkdir dir="${build.dir}"/>
         <javac srcdir="${src.dir}" destdir="${build.dir}"/>
     </target>
 
-    <!-- Package compiled files into a JAR -->
+    <!-- Create JAR file -->
     <target name="jar" depends="compile">
         <mkdir dir="${dist.dir}"/>
-        <jar destfile="${dist.dir}/${jar.name}" basedir="${build.dir}"/>
+        <jar destfile="${dist.dir}/MyProject.jar" basedir="${build.dir}"/>
     </target>
 
-    <!-- Create a TAR package -->
+    <!-- Create TAR file -->
     <target name="tar" depends="jar">
+        <mkdir dir="${dist.dir}"/>
         <tar destfile="${dist.dir}/MyProject.tar">
-            <tarfileset dir="${dist.dir}"/>
+            <tarfileset dir="${dist.dir}" includes="*.jar"/>
         </tar>
     </target>
 
-    <!-- Default target -->
-    <target name="package" depends="clean,jar,tar"/>
-    
+    <!-- Automatically copy build artifacts to deployment folder -->
+    <target name="deploy" depends="tar">
+        <mkdir dir="${deploy.dir}"/>
+        <copy todir="${deploy.dir}">
+            <fileset dir="${dist.dir}" includes="*.jar, *.tar"/>
+        </copy>
+    </target>
+
+    <!-- Default target that builds and deploys -->
+    <target name="package" depends="deploy"/>
+
 </project>
