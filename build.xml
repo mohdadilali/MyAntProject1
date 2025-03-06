@@ -1,0 +1,37 @@
+<project name="MyAntProject" basedir="." default="package">
+    
+    <!-- Set global properties -->
+    <property name="src.dir" value="src"/>
+    <property name="build.dir" value="build"/>
+    <property name="dist.dir" value="dist"/>
+    <property name="jar.name" value="MyProject.jar"/>
+    
+    <!-- Clean previous builds -->
+    <target name="clean">
+        <delete dir="${build.dir}"/>
+        <delete dir="${dist.dir}"/>
+    </target>
+
+    <!-- Compile Java sources -->
+    <target name="compile">
+        <mkdir dir="${build.dir}"/>
+        <javac srcdir="${src.dir}" destdir="${build.dir}"/>
+    </target>
+
+    <!-- Package compiled files into a JAR -->
+    <target name="jar" depends="compile">
+        <mkdir dir="${dist.dir}"/>
+        <jar destfile="${dist.dir}/${jar.name}" basedir="${build.dir}"/>
+    </target>
+
+    <!-- Create a TAR package -->
+    <target name="tar" depends="jar">
+        <tar destfile="${dist.dir}/MyProject.tar">
+            <tarfileset dir="${dist.dir}"/>
+        </tar>
+    </target>
+
+    <!-- Default target -->
+    <target name="package" depends="clean,jar,tar"/>
+    
+</project>
