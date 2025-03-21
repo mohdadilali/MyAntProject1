@@ -5,7 +5,8 @@
     <property name="build.dir" value="build"/>
     <property name="dist.dir" value="dist"/>
     <property name="deploy.dir" value="C:/Deployments"/>
-	<property name="main.class" value="com.example.HelloWorld"/>
+    <property name="main.class" value="com.example.HelloWorld"/>
+    <property name="manifest.file" value="${dist.dir}/MANIFEST.MF"/>
 
     <!-- Clean the previous build -->
     <target name="clean">
@@ -18,23 +19,22 @@
         <mkdir dir="${build.dir}"/>
         <javac srcdir="${src.dir}" destdir="${build.dir}"/>
     </target>
-	
-	<!-- Create Manifest File -->
+
+    <!-- Create a valid MANIFEST.MF -->
     <target name="manifest">
         <mkdir dir="${dist.dir}"/>
-        <echo file="${dist.dir}/MANIFEST.MF">
-            Main-Class: ${main.class}
-        </echo>
+        <echo file="${manifest.file}" message="Main-Class: ${main.class}"/>
     </target>
 
-
-    <!-- Create JAR file -->
+    <!-- Create JAR file with the manifest -->
     <target name="jar" depends="compile,manifest">
         <mkdir dir="${dist.dir}"/>
-        <jar destfile="${dist.dir}/MyProject.jar" basedir="${build.dir}" manifest="${dist.dir}/MANIFEST.MF"/>
+        <jar destfile="${dist.dir}/MyProject.jar" basedir="${build.dir}">
+            <manifest file="${manifest.file}"/>
+        </jar>
     </target>
 
-   <!-- Create TAR file -->
+    <!-- Create TAR file -->
     <target name="tar" depends="jar">
         <mkdir dir="${dist.dir}"/>
         <tar destfile="${dist.dir}/MyProject.tar">
@@ -42,11 +42,11 @@
         </tar>
     </target>
 
-   <!-- Automatically copy build artifacts to deployment folder -->
+    <!-- Automatically copy build artifacts to deployment folder -->
     <target name="deploy" depends="tar">
         <mkdir dir="${deploy.dir}"/>
         <copy todir="${deploy.dir}">
-            <fileset dir="${dist.dir}" includes="*.jar,*.tar"/>
+            <fileset dir="${dist.dir}" includes="*.jar, *.tar"/>
         </copy>
     </target>
 
