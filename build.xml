@@ -6,7 +6,6 @@
     <property name="dist.dir" value="dist"/>
     <property name="deploy.dir" value="C:/Deployments"/>
     <property name="main.class" value="com.example.HelloWorld"/>
-    <property name="manifest.file" value="${dist.dir}/MANIFEST.MF"/>
 
     <!-- Clean the previous build -->
     <target name="clean">
@@ -20,17 +19,13 @@
         <javac srcdir="${src.dir}" destdir="${build.dir}"/>
     </target>
 
-    <!-- Create a valid MANIFEST.MF -->
-    <target name="manifest">
-        <mkdir dir="${dist.dir}"/>
-        <echo file="${manifest.file}" message="Main-Class: ${main.class}"/>
-    </target>
-
-    <!-- Create JAR file with the manifest -->
-    <target name="jar" depends="compile,manifest">
+    <!-- Create JAR file with Main-Class defined -->
+    <target name="jar" depends="compile">
         <mkdir dir="${dist.dir}"/>
         <jar destfile="${dist.dir}/MyProject.jar" basedir="${build.dir}">
-            <manifest file="${manifest.file}"/>
+            <manifest>
+                <attribute name="Main-Class" value="${main.class}"/>
+            </manifest>
         </jar>
     </target>
 
